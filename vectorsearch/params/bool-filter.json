@@ -21,7 +21,7 @@
          "docvalue_fields" : ["_id"],
          "stored_fields" : "_none_"
     },
-    "filter_type": "post_filter",
+    "filter_type": "boolean",
     "filter_body": {
         "bool":
         {
