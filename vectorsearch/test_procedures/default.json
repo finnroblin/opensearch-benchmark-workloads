@@ -3,8 +3,8 @@
     "description": "Index vector search which does not use an algorithm that requires training.",
     "default": true,
     "schedule": [
-       {{ benchmark.collect(parts="common/index-only-schedule.json") }},
-       {{ benchmark.collect(parts="common/force-merge-schedule.json") }},
+       {{ benchmark.collect(parts="common/index-only-schedule.json") }},      
+    {{ benchmark.collect(parts="common/force-merge-schedule.json") }}
        {{ benchmark.collect(parts="common/search-only-schedule.json") }}
     ]
 },
