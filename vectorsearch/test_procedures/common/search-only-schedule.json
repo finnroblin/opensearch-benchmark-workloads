@@ -20,7 +20,6 @@
         "num_vectors" : {{ query_count | default(-1) }},
         "id-field-name": "{{ id_field_name }}",
         "body": {{ query_body | default ({}) | tojson }},
-        "filter": {{ query_filter | default ({}) | tojson }},
         "filter_body": {{ filter_body | default ({}) | tojson }},
         "filter_type": {{filter_type  | default ({}) | tojson }}
     },

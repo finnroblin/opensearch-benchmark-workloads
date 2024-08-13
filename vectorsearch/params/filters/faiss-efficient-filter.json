@@ -21,8 +21,9 @@
          "docvalue_fields" : ["_id"],
          "stored_fields" : "_none_"
     },
+    "dataset_has_attributes": 1,
     "filter_type": "efficient",
-    "query_filter": {
+    "filter_body": {
         "bool":
         {
             "should":
