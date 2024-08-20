@@ -19,5 +19,5 @@
 
     "query_data_set_format": "hdf5",
     "query_data_set_path":"/tmp/data-nested.hdf5",
-    "query_count": 10000
+    "query_count": 100
   }

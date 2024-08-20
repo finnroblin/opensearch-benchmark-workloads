@@ -8,6 +8,14 @@
     ]
 },
 {
+    "name": "multiple-clients",
+    "description": "Index vector search which does not use an algorithm that requires training.",
+    "default": false,
+    "schedule": [
+       {{ benchmark.collect(parts="common/multiple-clients-schedule.json") }}
+    ]
+},
+{
     "name": "no-train-test-index-only",
     "description": "Perform only indexing operation for vector search",
     "default": false,
