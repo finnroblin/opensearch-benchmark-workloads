@@ -8,6 +8,15 @@
     ]
 },
 {
+    "name": "bulk",
+    "description": "Index vector search which does not use an algorithm that requires training.",
+    "default": false,
+    "schedule": [
+        {{ benchmark.collect(parts="common/bulk-schedule.json") }},
+        {{ benchmark.collect(parts="common/search-only-schedule.json") }}
+    ]
+},
+{
     "name": "multiple-clients",
     "description": "Index vector search which does not use an algorithm that requires training.",
     "default": false,

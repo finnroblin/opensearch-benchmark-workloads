@@ -13,6 +13,22 @@
         }
     ],
     "corpora": [
+      {
+      "name": "cohere-bulk",
+      "base-url": "https://dbyiw3u3rf9yr.cloudfront.net/corpora/vectorsearch/cohere-wikipedia-22-12-en-embeddings",
+      "target-index": "{{ target_index_name }}",
+      "documents": [
+        {
+          "source-file": "documents-1k.hdf5.bz2",
+          "source-format": "hdf5",
+          "document-count": 1000
+        }
+      ],
+      
+      "generate-increasing-vector-ids": true,
+      "id-field-name": "_id",
+      "vector-field-name": "target_field"
+    },
     {
       "name": "cohere",
       "base-url": "https://dbyiw3u3rf9yr.cloudfront.net/corpora/vectorsearch/cohere-wikipedia-22-12-en-embeddings",
@@ -22,7 +38,6 @@
           "source-file": "documents-1k.hdf5.bz2",
           "source-format": "hdf5",
           "document-count": 1000
-          
         }
       ]
     },

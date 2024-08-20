@@ -1,0 +1,29 @@
+{
+            "operation": {
+                "name": "delete-target-index",
+                "operation-type": "delete-index",
+                "only-if-exists": true,
+                "index": "{{ target_index_name | default('target_index') }}"
+            }
+        },
+        {
+            "operation": {
+                "name": "create-target-index",
+                "operation-type": "create-index",
+                "index": "{{ target_index_name | default('target_index') }}"
+            }
+        },
+        {
+            "operation": {
+                "name": "bulk",
+                "operation-type": "bulk",
+                "bulk-size": 5,
+                "data_set_format": "{{ target_index_bulk_index_data_set_format | default('hdf5') }}",
+                "source_format": "hdf5",
+                "index": "target_index",
+                "field": "target_field",
+                "vector_dataset_context": "index",
+                "corpora": ["cohere-bulk"]
+            },
+            "clients": {{ target_index_bulk_indexing_clients | default(1)}}
+        }
