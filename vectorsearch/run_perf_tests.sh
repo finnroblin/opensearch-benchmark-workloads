@@ -57,7 +57,7 @@ echo "Number of runs: $NUM_RUNS"
 
 # Define file and test procedure combinations
 declare -a combinations=(
-    "./params/filters/efficient/faiss-hnsw-relaxed.json,search-only"
+    "./params/filters/efficient/faiss-hnsw-relaxed.json,no-train-test"
     "./params/filters/efficient/faiss-hnsw-restrictive.json,no-train-test"
     "./params/filters/efficient/faiss-ivf-relaxed.json,train-test"
     "./params/filters/efficient/faiss-ivf-restrictive.json,train-test"
@@ -73,7 +73,7 @@ declare -a combinations=(
 # Create client options if user and password are provided
 CLIENT_OPTIONS=""
 if [ -n "$USER" ] && [ -n "$PASSWORD" ]; then
-    CLIENT_OPTIONS="--client-options=\"basic_auth_user:'$USER',basic_auth_password:'$PASSWORD'\""
+    CLIENT_OPTIONS="--client-options=\"basic_auth_user:'$USER',basic_auth_password:'$PASSWORD',timeout:300\""
     echo "Authentication will be used."
 fi
 
@@ -94,8 +94,8 @@ do
         $CLIENT_OPTIONS"
     
     # Execute the command
+    echo $command
     eval $command
-    
     # Cool down between runs
     sleep 60
 done
