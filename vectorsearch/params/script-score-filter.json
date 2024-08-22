@@ -1,7 +1,7 @@
 {
     "target_index_name": "target_index",
     "target_field_name": "target_field",
-    "target_index_body": "indices/filter-script-score-index.json",
+    "target_index_body": "indices/filters/script-index.json",
     "target_index_primary_shards": 1,
     "target_index_dimension": 128,
     "target_index_space_type": "l2",

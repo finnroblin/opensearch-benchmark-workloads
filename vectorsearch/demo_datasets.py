@@ -1,4 +1,4 @@
-import h5py
+"""import h5py
 import boto3
 import shutil
 import numpy as np
@@ -51,7 +51,7 @@ with h5py.File('sift-128-euclidean-with-attr.hdf5', 'r') as attr_file:
     # taste = attributes[:, 1]
     # age = attributes[:, 2].astype(int)
 
-"""    with h5py.File('sift-128-euclidean-nested.hdf5', 'r+') as nested_file:
+with h5py.File('sift-128-euclidean-nested.hdf5', 'r+') as nested_file:
         nested_attr_data = nested_file['attributes'][:]
         parents = nested_attr_data[:, 3].astype(int)
         nested_file.create_dataset('parents', data=parents)
@@ -73,11 +73,10 @@ shutil.copy('sift-128-euclidean.hdf5', '/tmp/sift-128-euclidean.hdf5')
 
 # Step 7: Copy nested to /tmp/data-nested
 shutil.copy('sift-128-euclidean-nested.hdf5', '/tmp/data-nested.hdf5')
-"""
 # Step 8: Copy relaxed to /tmp/filter_relaxed.hdf5
 shutil.copy('sift-128-euclidean-with-relaxed-filters.hdf5', '/tmp/filter_relaxed.hdf5')
 
 # Step 9: Copy restrictive to /tmp/filter_restrictive.hdf5
 # shutil.copy('sift-128-euclidean-with-restrictive-filters.hdf5', '/tmp/filter_restrictive.hdf5')
 
-print("All operations completed successfully.")
+print("All operations completed successfully.")"""
