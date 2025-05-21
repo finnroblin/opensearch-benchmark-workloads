@@ -67,7 +67,7 @@
     "default": false,
     "schedule": [
         {{ benchmark.collect(parts="common/index-only-schedule.json") }},
-        {{ benchmark.collect(parts="common/multi-search-schedule-pre-merge.json") }}
+        {{ benchmark.collect(parts="common/multiple-search-schedule-pre-merge.json") }}
     ]
 },
 {
@@ -78,7 +78,7 @@
         {{ benchmark.collect(parts="common/train-index-only-schedule.json") }},
         {{ benchmark.collect(parts="common/train-model-schedule.json") }},
         {{ benchmark.collect(parts="common/force-merge-schedule.json") }},
-        {{ benchmark.collect(parts="common/multi-search-schedule.json") }}
+        {{ benchmark.collect(parts="common/multiple-search-schedule.json") }}
     ]
 },
 {
@@ -87,7 +87,7 @@
     "default": false,
     "schedule": [
         {{ benchmark.collect(parts="common/index-only-schedule.json") }},
-        {{ benchmark.collect(parts="common/multi-search-schedule.json") }}
+        {{ benchmark.collect(parts="common/multiple-search-schedule.json") }}
     ]
 },
 {
@@ -97,6 +97,6 @@
     "schedule": [
         {{ benchmark.collect(parts="common/train-index-only-schedule.json") }},
         {{ benchmark.collect(parts="common/train-model-schedule.json") }},
-        {{ benchmark.collect(parts="common/multi-search-schedule.json") }}
+        {{ benchmark.collect(parts="common/multiple-search-schedule.json") }}
     ]
 }
