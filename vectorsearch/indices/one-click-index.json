@@ -29,15 +29,21 @@
           "type": "knn_vector",
           "dimension": {{ target_index_dimension }},
           "mode": "{{ mode }}",
-          "compression_level": "{{ compression_level }}",
           "method": {
             "name": "hnsw",
             "space_type": "{{ target_index_space_type }}",
             "engine": "faiss",
             "parameters": {
-              "ef_search": 1024,
-              "ef_construction": 512,
-              "m": 32
+              "ef_search": 256,
+              "ef_construction": 256,
+              "m": 16,
+              "encoder": {
+                "name": "binary",
+                  "parameters": {
+                    "bits": 4,
+                    "random_rotation": true
+                }
+              }
             }
           }
         }
