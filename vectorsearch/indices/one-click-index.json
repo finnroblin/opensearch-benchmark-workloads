@@ -36,14 +36,7 @@
             "parameters": {
               "ef_search": 256,
               "ef_construction": 256,
-              "m": 16,
-              "encoder": {
-                "name": "binary",
-                  "parameters": {
-                    "bits": 4,
-                    "random_rotation": true
-                }
-              }
+              "m": 16
             }
           }
         }
