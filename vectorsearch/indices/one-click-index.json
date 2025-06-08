@@ -29,6 +29,7 @@
           "type": "knn_vector",
           "dimension": {{ target_index_dimension }},
           "mode": "{{ mode }}",
+          "compression_level": "{{ compression_level }}",
           "method": {
             "name": "hnsw",
             "space_type": "{{ target_index_space_type }}",
