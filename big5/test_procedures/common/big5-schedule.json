@@ -142,6 +142,13 @@
   "clients": {{ search_clients | default(1) }}
 },
 {
+  "operation": "date_histogram_hourly_with_filter_agg",
+  "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
+  "iterations": {{ test_iterations | default(100) | tojson }},
+  "target-throughput": {{ target_throughput | default(2) | tojson }},
+  "clients": {{ search_clients | default(1) }}
+},
+{
   "operation": "date_histogram_minute_agg",
   "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
   "iterations": {{ test_iterations | default(100) | tojson }},
@@ -254,6 +261,13 @@
   "clients": {{ search_clients | default(1) }}
 },
 {
+  "operation": "range-with-metrics",
+  "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
+  "iterations": {{ test_iterations | default(100) | tojson }},
+  "target-throughput": {{ target_throughput | default(2) | tojson }},
+  "clients": {{ search_clients | default(1) }}
+},
+{
   "operation": "range-auto-date-histo-with-metrics",
   "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
   "iterations": {{ test_iterations | default(100) | tojson }},
@@ -291,6 +305,20 @@
 {% if distribution_version.split('.') | map('int') | list  >= "2.19.1".split('.') | map('int') | list and distribution_version.split('.') | map('int') | list  < "6.0.0".split('.') | map('int') | list %}
 ,{
   "operation": "cardinality-agg-high-2",
+  "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
+  "iterations": {{ test_iterations | default(100) | tojson }},
+  "target-throughput": {{ target_throughput | default(2) | tojson }},
+  "clients": {{ search_clients | default(1) }}
+},
+{
+  "operation": "range_with_asc_sort",
+  "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
+  "iterations": {{ test_iterations | default(100) | tojson }},
+  "target-throughput": {{ target_throughput | default(2) | tojson }},
+  "clients": {{ search_clients | default(1) }}
+},
+{
+  "operation": "range_with_desc_sort",
   "warmup-iterations": {{ warmup_iterations | default(200) | tojson }},
   "iterations": {{ test_iterations | default(100) | tojson }},
   "target-throughput": {{ target_throughput | default(2) | tojson }},

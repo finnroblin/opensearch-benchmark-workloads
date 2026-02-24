@@ -6,6 +6,13 @@
       "corpora": "http_logs"
     },
     {
+      "name": "grpc-index-append",
+      "operation-type": "proto-bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "http_logs"
+    },
+    {
       "name": "index-append-with-ingest-baseline-pipeline",
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
@@ -225,6 +232,53 @@
       }
     },
     {
+      "name": "hourly_agg_with_filter",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "term": {
+            "status": 200
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "by_hour": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "calendar_interval": "hour"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "hourly_agg_with_filter_and_metrics",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "term": {
+            "status": 200
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "by_hour": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "calendar_interval": "hour"
+            }
+          },
+          "size_stats": {
+            "stats": {
+              "field": "size"
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "multi_term_agg",
       "operation-type": "search",
       "index": "logs-*",
@@ -287,6 +341,21 @@
         "sort" : [
           {"size" : "asc"}
         ]
+      }
+    },
+    {
+      "name": "range_size",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "range": {
+            "size": {
+              "gte": 20,
+              "lte": 200
+            }
+          }
+        }
       }
     },
     {
@@ -542,6 +611,44 @@
               "target_field": "status_code"
             }
           }
+        ]
+      }
+    },
+    {
+      "name": "range_with_desc_sort",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "size": 100,
+        "query": {
+          "range": {
+            "size": {
+              "gte": 10,
+              "lte": 200
+            }
+          }
+        },
+        "sort": [
+          { "size": "desc" }
+        ]
+      }
+    },
+    {
+      "name": "range_with_asc_sort",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "size": 100,
+        "query": {
+          "range": {
+            "size": {
+              "gte": 10,
+              "lte": 200
+            }
+          }
+        },
+        "sort": [
+          { "size": "asc" }
         ]
       }
     }

@@ -9,6 +9,16 @@
   ]
 },
 {
+  "name": "grpc-big5",
+  "default": false,
+  "schedule": [
+    {% with default_index_settings={}, index_name="big5" %}
+    {{ benchmark.collect(parts="../../common_operations/grpc_workload_setup.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="grpc/grpc-schedule.json") }}
+  ]
+},
+{
   "name": "test",
   "default": false,
   "schedule": [
@@ -16,5 +26,50 @@
     {{ benchmark.collect(parts="../../common_operations/workload_setup.json") }},
     {% endwith %}
     {{ benchmark.collect(parts="common/test-schedule.json") }}
+  ]
+},
+{
+  "name": "ppl",
+  "description": "Indexes the whole document corpus using OpenSearch default settings and runs PPL (Piped Processing Language) queries. Requires the SQL plugin to be installed.",
+  "default": false,
+  "schedule": [
+    {% with default_index_settings={}, index_name="big5" %}
+    {{ benchmark.collect(parts="../../common_operations/workload_setup.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="ppl/ppl-schedule.json") }},
+    {{ benchmark.collect(parts="ppl/ppl-schedule-histogram-only.json") }}
+  ]
+},
+{
+  "name": "ppl-test",
+  "description": "Indexes the whole document corpus and runs a single PPL query to test SQL plugin availability.",
+  "default": false,
+  "schedule": [
+    {% with default_index_settings={}, index_name="big5" %}
+    {{ benchmark.collect(parts="../../common_operations/workload_setup.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="ppl/ppl-test-schedule.json") }}
+  ]
+},
+{
+  "name": "ppl-calcite-disabled",
+  "description": "Indexes the whole document corpus and runs PPL queries without histogram operations (for use when Calcite is disabled in version 3.2.0). Requires the SQL plugin to be installed.",
+  "default": false,
+  "schedule": [
+    {% with default_index_settings={}, index_name="big5" %}
+    {{ benchmark.collect(parts="../../common_operations/workload_setup.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="ppl/ppl-schedule.json") }}
+  ]
+},
+{
+  "name": "intra-segment",
+  "description": "Runs search queries for testing intra-segment search",
+  "default": false,
+  "schedule": [
+    {% with default_index_settings={}, index_name="big5" %}
+    {{ benchmark.collect(parts="../../common_operations/workload_setup.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="intra_segment/intra-segment-schedule.json") }}
   ]
 }

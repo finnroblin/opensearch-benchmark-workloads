@@ -36,7 +36,92 @@ Before using this repository, ensure you have the following installed:
 
 - [OpenSearch](https://opensearch.org) (v2.11 or later)
 - [OpenSearch Benchmark](https://opensearch.org/docs/latest/benchmark) (v1.2 or later)
+- [OpenSearch SQL Plugin](https://opensearch.org/docs/latest/search-plugins/sql/index/) (required for PPL operations)
 
+
+### PPL Operations Support
+
+This workload includes PPL (Piped Processing Language) operations that provide an alternative query interface to OpenSearch. PPL operations are available in the `operations/ppl.json` file and include:
+
+- **ppl-default**: Basic PPL query with head operation
+- **ppl-term**: Term filtering using PPL where clause
+- **ppl-range**: Range filtering with timestamp conditions
+- **ppl-*-sort-***: Various sorting operations (ascending/descending, with/without shortcuts)
+- **ppl-date-histogram-***: Date histogram aggregations (hourly/minute intervals)
+- **ppl-composite-***: Composite aggregations for terms and date histograms
+- **ppl-keyword-***: Keyword-based operations and aggregations
+- **ppl-query-string-***: Query string operations with filtering and sorting
+- **ppl-range-***: Range queries with various conditions and sorting
+- **ppl-sort-***: Sorting operations on different field types
+- **ppl-terms-***: Terms aggregations for statistical analysis
+
+To use PPL operations, run the workload with the `ppl` test procedure:
+
+```bash
+osb execute-test --workload=big5 --test-procedure=ppl
+```
+
+This will execute all PPL operations including basic queries, sorting, aggregations, and range operations using the PPL syntax instead of the standard OpenSearch Query DSL.
+
+#### PPL Operations Troubleshooting
+
+If your cluster doesn't have the SQL plugin installed, all PPL operations will fail with the following error:
+
+```
+[ERROR] no handler found for uri [/_plugins/_ppl] and method [POST] ({'error': 'no handler found for uri [/_plugins/_ppl] and method [POST]'})
+```
+
+To resolve this issue, **install the OpenSearch SQL Plugin** on your cluster (required for PPL operations).
+
+#### Enabling Calcite for PPL Operations
+
+By default, Calcite is disabled. To enable it for PPL operations, use the following command:
+
+```bash
+curl -XPUT "http://localhost:9200/_cluster/settings" \
+-H "Content-Type: application/json" \
+-d'{
+  "persistent": {
+    "plugins.calcite.enabled": true
+  }
+}'
+```
+
+#### PPL Test Procedures for Version 3.2.0
+
+For OpenSearch version 3.2.0, two test procedures are available depending on whether Calcite is enabled:
+
+**When Calcite is enabled:**
+```bash
+osb execute-test --workload=big5 --test-procedure=ppl
+```
+This runs all 50 PPL operations including histogram queries.
+
+**When Calcite is disabled:**
+```bash
+osb execute-test --workload=big5 --test-procedure=ppl-calcite-disabled
+```
+This runs 42 PPL operations, excluding the following queries that require Calcite support:
+- `ppl-composite-date-histogram-daily`
+- `ppl-date-histogram-hourly-agg`
+- `ppl-date-histogram-minute-agg`
+- `ppl-range-auto-date-histo-with-metrics`
+- `ppl-range-auto-date-histo`
+- `ppl-range-agg-1`
+- `ppl-range-agg-2`
+- `ppl-cardinality-agg-high-2`
+
+### gRPC Operations Support
+
+Limited gRPC support is provided for the big5 workload over an protobuf/gRPC transport. gRPC operations can be found in `operations/grpc.json` with new operations added as support is expanded for gRPC APIs in OpenSearch. All supported big5 operations can be run with the `big5/test_procedures/grpc/grpc-schedule.json` (`--test-procedure="grpc-big5"`). To benchmark with the gRPC transport ensure the `transport-grpc` plugin is installed on the cluster and enabled in settings. See the `transport-grpc` [README.md](https://github.com/opensearch-project/OpenSearch/tree/main/modules/transport-grpc#readme) for guidance on enabling and using this transport. Note that the gRPC transport starts on a seperate endpoint from the default REST API, specify this endpoint with `--grpc-target-hosts=<host:port>`. 
+
+### gRPC Operations Support
+
+This workload includes limited gRPC/protobuf support for big5 operations. that provide an alternative query interface to OpenSearch. Find supported gRPC operations in `operations/grpc.json`.
+
+- **grpc-index-append**: Bulk ingestion of big5 index
+- **grpc-match-all**: Match all query.
+- **grpc-term**: Simple term query on `log.file.path`.
 
 ### Parameters
 
@@ -68,6 +153,7 @@ This workload allows the following parameters to be specified using `--workload-
 * `target_throughput` (default: 2): Target throughput for each query operation in requests per second, use 0 or "" for no throughput throttling.
 * `warmup_iterations` (default: 100): Number of warmup query iterations prior to actual measurements commencing.
 * `index_translog_durability` (default: "async"): Controls the transaction log flush behavior. "request" flushes after every operation to avoid data loss, while "async" batches changes for efficiency.
+* `index_sort` (default: false): If true, enabled index time asc sort on `@timestamp` field
 
 NOTE: If disabling `target_throughput`, know that `target_throughput:""` is snynonymous with `target_throughput:0`.
 
@@ -121,6 +207,12 @@ The document schema can be found in the `index.json` file.  An example document 
 ```
 
 ### Sample Run Output
+
+#### Default Test Procedure
+
+```bash
+osb execute-test --workload=big5
+```
 
 ```
    ____                  _____                      __       ____                  __                         __
@@ -177,8 +269,99 @@ Running range_field_disjunction_big_range_small_term_query                     [
 Running range_field_conjunction_small_range_small_term_query                   [100% done]
 Running range_field_conjunction_small_range_big_term_query                     [100% done]
 Running range-auto-date-histo                                                  [100% done]
+Running range-with-metrics                                                     [100% done]
 Running range-auto-date-histo-with-metrics                                     [100% done]
 
+------------------------------------------------------
+```
+
+#### PPL Test Procedure
+
+```bash
+osb execute-test --workload=big5 --test-procedure=ppl
+```
+
+```
+[INFO] Executing test with workload [big5], test_procedure [ppl] and provision_config_instance ['external'] with version [3.0.0].
+
+Running delete-index                                                           [100% done]
+Running create-index                                                           [100% done]
+Running check-cluster-health                                                   [100% done]
+Running index-append                                                           [100% done]
+Running refresh-after-index                                                    [100% done]
+Running force-merge                                                            [100% done]
+Running refresh-after-force-merge                                              [100% done]
+Running wait-until-merges-finish                                               [100% done]
+Running ppl-default                                                            [100% done]
+Running ppl-term                                                               [100% done]
+Running ppl-range                                                              [100% done]
+Running ppl-asc-sort-timestamp-can-match-shortcut                              [100% done]
+Running ppl-asc-sort-timestamp-no-can-match-shortcut                           [100% done]
+Running ppl-asc-sort-timestamp                                                 [100% done]
+Running ppl-asc-sort-with-after-timestamp                                      [100% done]
+Running ppl-composite-date-histogram-daily                                     [100% done]
+Running ppl-composite-terms-keyword                                            [100% done]
+Running ppl-composite-terms                                                    [100% done]
+Running ppl-date-histogram-hourly-agg                                          [100% done]
+Running ppl-date-histogram-minute-agg                                          [100% done]
+Running ppl-desc-sort-timestamp-can-match-shortcut                             [100% done]
+Running ppl-desc-sort-timestamp-no-can-match-shortcut                          [100% done]
+Running ppl-desc-sort-timestamp                                                [100% done]
+Running ppl-desc-sort-with-after-timestamp                                     [100% done]
+Running ppl-keyword-in-range                                                   [100% done]
+Running ppl-keyword-terms-low-cardinality                                      [100% done]
+Running ppl-keyword-terms                                                      [100% done]
+Running ppl-multi-terms-keyword                                                [100% done]
+Running ppl-query-string-on-message                                            [100% done]
+Running ppl-query-string-on-message-filtered                                   [100% done]
+Running ppl-query-string-on-message-filtered-sorted-num                        [100% done]
+Running ppl-range-auto-date-histo                                              [100% done]
+Running ppl-range-auto-date-histo-with-metrics                                 [100% done]
+Running ppl-range-field-conjunction-big-range-big-term-query                   [100% done]
+Running ppl-range-field-conjunction-small-range-big-term-query                 [100% done]
+Running ppl-range-field-conjunction-small-range-small-term-query               [100% done]
+Running ppl-range-field-disjunction-big-range-small-term-query                 [100% done]
+Running ppl-range-numeric                                                      [100% done]
+Running ppl-range-with-asc-sort                                                [100% done]
+Running ppl-range-with-desc-sort                                               [100% done]
+Running ppl-scroll                                                             [100% done]
+Running ppl-sort-keyword-can-match-shortcut                                    [100% done]
+Running ppl-sort-keyword-no-can-match-shortcut                                 [100% done]
+Running ppl-sort-numeric-asc                                                   [100% done]
+Running ppl-sort-numeric-asc-with-match                                        [100% done]
+Running ppl-sort-numeric-desc                                                  [100% done]
+Running ppl-sort-numeric-desc-with-match                                       [100% done]
+Running ppl-terms-significant-1                                                [100% done]
+Running ppl-terms-significant-2                                                [100% done]
+
+------------------------------------------------------
+```
+
+#### gRPC Test Procedure
+
+```bash
+opensearch-benchmark run \
+    --pipeline=benchmark-only \
+    --workload-path="big5" \
+    --test-procedure="grpc-big5" \
+    --target-host=http://localhost:9200 \
+    --grpc-target-hosts=http://localhost:9400
+```
+
+```
+[INFO] [Test Run ID]: 8a193e44-6a36-4dff-a516-5bc07c10d382
+[INFO] Running test with workload [big5], test_procedure [grpc-big5] and cluster_config ['external'] with version [3.4.0-SNAPSHOT].
+
+Running delete-index                                                           [100% done]
+Running create-index                                                           [100% done]
+Running check-cluster-health                                                   [100% done]
+Running grpc-index-append                                                      [100% done]
+Running refresh-after-index                                                    [100% done]
+Running force-merge                                                            [100% done]
+Running refresh-after-force-merge                                              [100% done]
+Running wait-until-merges-finish                                               [100% done]
+Running grpc-match-all                                                         [100% done]
+Running grpc-term                                                              [100% done]
 ------------------------------------------------------
 ```
 
@@ -204,4 +387,3 @@ There are several points to note when carrying out performance runs using large 
 ### License
 
 Please see the included LICENSE.txt file for details about the license applicable to this workload and its associated artifacts.
-
